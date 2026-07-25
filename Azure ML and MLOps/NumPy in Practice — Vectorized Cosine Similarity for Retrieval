@@ -1,0 +1,18 @@
+## NumPy in Practice — Vectorized Cosine Similarity for Retrieval
+
+Concept:
+
+When comparing a query embedding against many document embeddings (the core operation behind RAG retrieval), 
+looping over documents in plain Python and computing similarity one at a time is slow and doesn't scale past a few hundred documents. 
+NumPy lets you compute similarity against all documents at once using vectorized operations — no explicit loop.
+
+Why it matters:
+
+doc_norms @ query_norm computes all n similarity scores in a single matrix operation instead of a Python for-loop calling a similarity function n times.
+For a corpus of a few hundred documents this barely matters; for tens of thousands, the vectorized version is dramatically faster 
+because NumPy pushes the loop down into optimized C code instead of the Python interpreter.
+
+Applied as:
+
+This is the underlying operation behind the retrieve() step in the retrieval-eval script from a 
+previous entry — swapping the placeholder retriever for a real one will use exactly this kind of vectorized similarity search.
