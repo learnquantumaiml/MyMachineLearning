@@ -1,3 +1,3 @@
-# MachineLearning2025
+# MachineLearning amd MLOps
 
 I have kick started my Machine learning journey last year. I will share my learning journey about machine learning and machine learning operations in Azure.
