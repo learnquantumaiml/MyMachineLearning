@@ -1,0 +1,27 @@
+Azure ML Compute Clusters — Using Them Effectively
+
+Concept:
+
+An Azure ML compute cluster is a managed, auto-scaling pool of VMs for training jobs — as opposed to a compute instance, which is a single always-available dev VM.
+The cluster scales to zero nodes when idle, so you only pay for the minutes it's actually running a job.
+
+The advantage isn't just "more compute" — it's cost + elasticity: a cluster can scale from 0 to N nodes automatically per job,
+run parallel trials (e.g. hyperparameter sweeps) across nodes at once, and shut itself down without you managing VM lifecycle.
+
+How I'm using it:
+
+- Min nodes = 0: cluster scales down fully between jobs, so idle time costs nothing — critical when running jobs a few times a week, not continuously.
+- Max nodes sized to the workload: set based on how many parallel trials/sweep runs I actually need, not a guess.
+- Low-priority/spot VMs for non-critical training runs: meaningfully cheaper, with the tradeoff that a job
+  can be pre-empted — fine for exploratory or retry-tolerant training, not for a final production run.
+- One cluster per workload type rather than one giant shared cluster — keeps quota and cost attribution clean per project.
+
+What surprised me:
+
+The scale-to-zero behavior means the first job after idle time has cold-start latency (provisioning 
+he node) — worth expecting a few minutes of "nothing happening" before the job log actually starts, rather than assuming something's broken.
+
+Applied as:
+
+Used a compute cluster (min=0, max=4, low-priority) for a batch of retraining/eval runs on the RAG assistant pipeline, 
+instead of running everything sequentially on a single compute instance.
