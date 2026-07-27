@@ -1,0 +1,29 @@
+Vectorized feature scaling (standardization/normalization)
+
+Key points to note:
+
+-Machine learning models like linear regression, KNN, and neural networks are sensitive to the scale of numbers. 
+-If "income" ranges in the tens of thousands and "score" ranges 0–1, the model can wrongly treat income as more important just because its numbers are bigger.
+-Z-score standardization reshapes each column so it has mean 0 and standard deviation 1 — useful when your data roughly follows a bell curve.
+-Min-Max normalization squeezes values into a 0–1 range — useful when you want a fixed bounded range (e.g., for neural network inputs).
+-axis=0 means "operate down each column," and NumPy's broadcasting automatically applies the column stats to every row without a loop.
+
+I demonstrated how to preprocess numerical data by applying feature scaling techniques such as z-score standardization and min-max normalization. 
+This is an important step in preparing data for machine learning models in Azure AI workflows.
+
+Output:
+
+Z-score scaled:
+ [[-1.18928584 -0.81649658  0.69748583]
+ [ 0.49366582  0.29690785 -0.46499055]
+ [-0.06731807 -0.25979437  1.27872403]
+ [ 1.61563359  1.78144709 -1.62746694]
+ [-0.85269551 -1.00206399  0.11624764]]
+Min-Max scaled:
+ [[0.         0.06666667 0.8       ]
+ [0.6        0.46666667 0.4       ]
+ [0.4        0.26666667 1.        ]
+ [1.         1.         0.        ]
+ [0.12       0.         0.6       ]]
+
+Pro tip: Experiment with different values in the dataset to understand how feature scaling behaves across various inputs.
