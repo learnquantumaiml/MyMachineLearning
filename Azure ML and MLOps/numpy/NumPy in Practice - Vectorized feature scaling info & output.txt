@@ -1,4 +1,4 @@
-Vectorized feature scaling (standardization/normalization)
+## NumPy in Practice — Vectorized feature scaling (standardization/normalization)
 
 Key points to note:
 
