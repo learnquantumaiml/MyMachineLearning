@@ -1,0 +1,33 @@
+## Handling missing values with masked arrays / NaN-aware stats
+
+Real-world data almost always has gaps — a sensor didn't report, a form field was skipped. Feeding NaN into a model breaks training, so you must detect and fill gaps first.
+
+What it does exactly?
+- np.nanmean(data, axis=0) calculates the mean of each column, skipping NaN.
+
+- np.isnan(data) creates a mask that shows where the missing values are.
+
+- The missing values are replaced with the corresponding column mean.
+
+What we can achieve?
+
+- Clean incomplete data before machine learning or analysis.
+
+- Avoid errors caused by missing values.
+
+- Keep all rows usable instead of dropping rows with missing data.
+
+- Example: if one column has values 2, 8, 11, its mean is 7, so any missing value in that column becomes 7.
+
+Output:
+
+Missing mask:
+ [[False False  True]
+ [False  True False]
+ [False False False]
+ [ True False False]]
+Imputed data:
+ [[ 1.  2.  9.]
+ [ 4.  7.  6.]
+ [ 7.  8.  9.]
+ [ 4. 11. 12.]]
