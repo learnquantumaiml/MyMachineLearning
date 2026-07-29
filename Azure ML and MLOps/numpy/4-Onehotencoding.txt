@@ -1,0 +1,31 @@
+Models only understand numbers, not text labels like "low/medium/high." One-hot encoding turns each category into its own 0/1 column,
+so no false numeric order is implied (unlike labeling low=0, medium=1, high=2, which wrongly suggests high is "more" than low mathematically).
+
+
+In simple terms:
+
+- np.unique(categories) finds the different category names and sorts them.
+
+- np.searchsorted(...) gives each category its position number.
+
+- np.eye(...) creates an identity matrix, and indexing it makes one-hot encoding.
+
+What we can achieve?
+
+- Turn words into a machine-friendly format.
+
+- Represent each category as a separate binary column.
+
+- Avoid giving categories a fake order or numeric meaning.
+
+For example, medium becomes something like [0, 0, 1], while low becomes [0, 1, 0].
+
+Output:
+
+Categories: ['high' 'low' 'medium']
+One-hot matrix:
+ [[0. 1. 0.]
+ [0. 0. 1.]
+ [1. 0. 0.]
+ [0. 0. 1.]
+ [0. 1. 0.]]
