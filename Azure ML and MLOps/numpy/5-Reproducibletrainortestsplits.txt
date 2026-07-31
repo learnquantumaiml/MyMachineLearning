@@ -1,0 +1,27 @@
+Train/Test Split:
+
+- You never test a model on the same data it trained on - that would be like grading a student using the exact questions they memorized.
+- Splitting data into train/test sets checks if the model generalizes.
+
+What it does, simply:
+
+- Uses NumPy’s random generator with a fixed seed so results are the same every run.
+
+- Generates 20 samples with 4 features each (X) and binary labels 0/1 (y).
+
+- Shuffles the sample indices once, then splits 80% for training and 20% for testing while keeping X and y aligned.
+
+- Prints the shapes of the train/test sets and how many 0s and 1s are in the training labels.
+
+What we can achieve with this:
+
+1) A quick, controlled setup to test or demonstrate ML models without needing real data.
+
+2) A standard train/test split pattern you can reuse on real datasets.
+
+3) Insight into class balance in the training set, which helps us spot potential bias before training.
+
+Output:
+
+Train shape: (16, 4) Test shape: (4, 4)
+Train label balance: [10  6]
