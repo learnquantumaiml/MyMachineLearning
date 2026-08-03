@@ -1,0 +1,18 @@
+- Accuracy alone can be misleading (e.g., a model predicting "no disease" 95% of the time looks 95% accurate on rare-disease data, but it's useless). 
+- Precision, recall, and F1 give a fuller picture.
+
+What it does, simply:
+
+- tp, tn, fp, and fn count correct and wrong predictions.
+- precision tells you: when the model predicts “positive,” how often is it right.
+- recall tells you: out of all real positives, how many the model found.
+- F1 gives one score that balances precision and recall.
+
+What we can achieve with this:
+
+- Judge model performance beyond just accuracy.
+- Understand whether the model is making too many false alarms or missing too many positives.
+- Compare different models in a clearer way, especially for imbalanced datasets.
+
+Example: if you care about catching fraud or disease, recall is very important; if false alarms are costly, 
+         precision matters more.
