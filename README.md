@@ -1,3 +1,10 @@
-# Azure MachineLearning and Azure MLOps
+# Azure MachineLearning and Azure MLOps Journey
 
-I have kick started my Machine learning journey last year. I will share my learning journey about machine learning and machine learning operations in Azure.
+Public learning + portfolio repo, built as part of my Azure MLOps learning journey.
+
+## Background
+
+- 15+ years in cloud/infra, currently an Azure Tech Lead specializing in MLOps.
+  
+- This repo tracks hands-on work supporting a transition toward AI platform / MLOps engineering roles — combining daily fundamentals practice with a real deployed      project rather than isolated tutorials.
+
