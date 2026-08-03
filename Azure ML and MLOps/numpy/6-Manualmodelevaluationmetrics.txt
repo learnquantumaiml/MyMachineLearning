@@ -16,3 +16,8 @@ What we can achieve with this:
 
 Example: if you care about catching fraud or disease, recall is very important; if false alarms are costly, 
          precision matters more.
+
+Output:
+
+TP=4 TN=3 FP=2 FN=1
+Precision=0.67 Recall=0.80 F1=0.73
