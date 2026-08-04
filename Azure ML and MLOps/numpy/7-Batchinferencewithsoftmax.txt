@@ -1,0 +1,30 @@
+When a deployed model scores many requests at once (a "batch endpoint" in Azure ML),
+it needs to convert raw model outputs (logits) into probabilities efficiently, all in one vectorized pass instead of a Python loop.
+
+What this code does, simply?
+- logits are raw scores from a model for 5 samples across 3 classes.
+- The softmax function:
+   * Shifts each row by its maximum (for numerical stability).
+   * Exponentiates the shifted values.
+   * Normalizes each row so the probabilities sum to 1.
+   * probs becomes a 5×3 matrix of probabilities (one probability distribution per sample).
+   * predicted_classes picks, for each sample, the class index with the highest probability.
+
+What we can achieve with this?
+- Convert any multi-class model’s raw outputs into interpretable probabilities.
+- Get predicted class labels for batched inputs.
+
+Use probs for:
+- Confidence scoring (e.g., thresholding low-confidence predictions).
+- Loss computation (e.g., cross-entropy) during training.
+- Ranking or uncertainty analysis in MLOps pipelines.
+
+Output:
+
+Probabilities:
+ [[0.659 0.242 0.099]
+ [0.11  0.809 0.081]
+ [0.333 0.333 0.333]
+ [0.896 0.054 0.049]
+ [0.031 0.034 0.934]]
+Predicted classes: [0 1 0 0 2]
