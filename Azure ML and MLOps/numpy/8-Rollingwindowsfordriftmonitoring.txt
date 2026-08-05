@@ -1,0 +1,27 @@
+Once a model is live, its input data can "drift" over time (e.g., customer behavior changes), silently degrading accuracy.
+Monitoring rolling statistics over a stream of incoming data is how you catch that early.
+
+What it does simply?
+
+- rolling_mean shows the average of each 5-value group.
+- rolling_std shows how spread out those 5 values are.
+- as_strided makes these overlapping groups efficiently, without copying data many times.
+
+What we can achieve from this?
+
+a) Detect data drift in streaming ML inputs.
+b) Monitor whether model input values are changing over time.
+c) Smooth noisy data and spot sudden spikes.
+d) Build lightweight real-time monitoring for ML/MLOps pipelines.
+
+Example: 
+If the rolling mean keeps rising, your input data may be drifting upward; if rolling std jumps, the data may be becoming unstable.
+
+Output:
+
+Rolling mean:
+ [12.2 13.  13.8 15.2 16.  16.8 18.  19.2 19.8 21.  22.2 23.  23.8 25.2
+ 26.  26.8]
+Rolling std:
+ [1.72 1.41 1.72 1.72 1.41 1.72 1.41 1.72 1.72 1.41 1.72 1.41 1.72 1.72
+ 1.41 1.72]
