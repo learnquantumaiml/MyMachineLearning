@@ -1,0 +1,86 @@
+## PART 1: Foundational Data and Classical ML Libraries (Python) - Quick Notes
+
+- These libraries form the foundation of many machine-learning projects. 
+- They support everything from numerical computation and data preparation to statistical analysis and traditional machine-learning models.
+
+1) NumPy:
+- NumPy is a core Python library for working with multidimensional arrays and performing fast mathematical operations.
+- It provides the numerical foundation for many other data-science and machine-learning libraries.
+
+Real-world use case:
+- NumPy is used in everyday data-science and machine-learning tasks. Many popular libraries, including pandas and scikit-learn, rely on it behind the scenes.
+
+Algorithms and techniques:
+- Not algorithm-specific, but implements the linear algebra behind regression, gradient descent, matrix factorization.
+
+2) Pandas:
+- Pandas is a powerful Python library for organizing, cleaning, joining, and reshaping tabular data.
+
+Real-world use case:
+- It is commonly used to prepare datasets and create features before passing the data to a machine-learning model. 
+- In many projects, data preparation accounts for most of the work.
+
+Algorithms and techniques:
+- Data cleaning and transformation.
+- Feature engineering.
+- Data joining and aggregation.
+- Preparing data for regression, clustering, and tree-based models.
+
+3) scikit-learn:
+
+- scikit-learn is one of the most widely used toolkits for classical machine learning. 
+- It provides a consistent fit and predict interface across many different algorithms.
+
+Real-world use case:
+- It is ideal for building quick baselines and lightweight production models when using a deep-learning framework would be unnecessary.
+
+Algorithms and techniques:
+- Linear regression.
+- Logistic regression.
+- Random forests.
+- Support vector machines.
+- K-Means clustering.
+- Gradient boosting.
+- Principal Component Analysis (PCA).
+
+4) XGBoost:
+
+- XGBoost is an optimized and regularized library for building gradient-boosted decision-tree models.
+
+Real-world use case:
+- It is widely used for structured or tabular prediction tasks, such as:
+  a) Cost estimation.
+  b) Customer churn prediction.
+  c) Credit-risk assessment.
+  d) Sales forecasting. 
+
+Algorithms and techniques:
+- Gradient-boosted decision trees
+
+5) LightGBM:
+
+- LightGBM is Microsoft’s gradient-boosting library. 
+- It is designed to train models quickly on large tabular datasets by using histogram-based techniques.
+
+Real-world use case:
+- It is particularly useful when working with millions of records and when fast training or batch scoring is important.
+
+Algorithms and techniques:
+- Gradient-boosted decision trees.
+- Histogram-based decision-tree learning.
+
+6) statsmodels:
+
+- statsmodels is a statistics-focused Python library for performing regression, time-series analysis, and hypothesis testing. 
+- It provides detailed statistical results such as p-values, confidence intervals, and regression summaries.
+
+Real-world use case:
+- It is useful when stakeholders need to understand whether a relationship is statistically significant, rather than receiving only a prediction.
+
+Algorithms and techniques:
+- Ordinary Least Squares (OLS).
+- Generalized Linear Models (GLMs).
+- ARIMA.
+- Time-series analysis.
+- Hypothesis testing.
+- Confidence-interval estimation.
