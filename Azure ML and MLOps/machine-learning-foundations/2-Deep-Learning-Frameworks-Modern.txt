@@ -1,0 +1,43 @@
+## PART 2: Deep Learning Frameworks - Modern - Quick Notes
+
+1) PyTorch:
+- The dominant deep learning framework, dynamic computation graph, research-to-production flexibility.
+
+Use case: 
+  - Fine-tuning a transformer, or building a custom architecture for something like a clinical imaging classifier
+
+Algorithms: 
+ - CNNs.
+ - RNNs/LSTMs.
+ - Transformers.
+ - GANs.
+ - Diffusion models.
+
+2) TensorFlow / Keras:
+- Google's deep learning framework; Keras is the high-level, fast-to-prototype API on top.
+
+Use case:
+- Enterprise pipelines with existing TF investment; TFLite/TF Serving for edge deployment.
+
+Algorithms: 
+ - Same neural-net family as PyTorch.
+
+3) Hugging Face Transformers Unified API:
+- To load and fine-tune pretrained transformer models across text, vision, and audio.
+
+Use case: 
+- Swapping in a domain-specific LLM or embedding model instead of training from scratch, feeds directly into RAG work.
+
+Algorithms: 
+ - Transformer architectures/BERT-style encoders.
+ - GPT-style decoders.
+ - T5.
+
+4) JAX:
+- Google's NumPy-compatible, auto-differentiated library, built for speed at scale.
+
+Use case: 
+- Less common in day-to-day enterprise MLOps; shows up in research-grade pipelines.
+
+Algorithms: 
+ - Any differentiable model, especially large-scale research architectures.
