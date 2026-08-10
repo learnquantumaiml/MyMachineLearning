@@ -1,0 +1,34 @@
+## This code builds a complete customer-churn prediction system.
+
+- It creates fake customer data, including age, contract type, charges, and customer duration.
+- It cleans the data by filling missing values and converting text categories into numbers.
+- It trains a Logistic Regression model to learn which customers may leave.
+- It tests the model on unseen customers and predicts whether new customers are likely to churn.
+- The Pipeline automatically performs preprocessing and prediction in the correct order, which is a recommended scikit-learn approach.
+
+What we can achieve from this?
+1) Identify customers who may cancel their subscription.
+2) Contact high-risk customers with discounts or better offers.
+3) Automate predictions for many customers.
+4) Build a reusable and production-friendly ML workflow.
+5) Avoid errors when data contains missing values or new contract categories.
+
+Example:
+
+text
+Customer 1: young, short-term contract, high charges
+Prediction: LIKELY TO CHURN
+
+Customer 2: long-term customer, two-year contract, lower charges
+Prediction: likely to stay
+
+- In the above example, the model’s accuracy tells us how often it correctly predicts churn or no churn on customers it has not seen before.
+- However, because this example uses synthetic data, it is mainly for learning; real business data is needed for reliable decisions.
+
+Output:
+
+Test accuracy: 88.12%
+(This means the pipeline correctly predicted churn/no-churn for 88% of customers it had never seen before.)
+
+New customer 1: LIKELY TO CHURN
+New customer 2: likely to stay
