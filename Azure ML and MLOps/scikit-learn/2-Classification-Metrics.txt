@@ -1,0 +1,61 @@
+## Classification + Evaluation Metrics (Accuracy, Precision, Recall, F1, ROC-AUC).
+
+I have tried to use this code, that creates a fake loan dataset where only 25% of applicants default. It then also do below steps:
+
+- Trains a Random Forest model to predict whether an applicant will default.
+- Compares it with a basic model that always predicts “no default.”
+- Measures performance using accuracy, precision, recall, F1, ROC-AUC, and a confusion matrix.
+
+What we can achieve from this?
+- How many risky applicants the model correctly identifies?
+- How many good customers are incorrectly flagged?
+- How many real defaulters the model misses?
+- Whether the model is genuinely useful or only has high accuracy because most applicants do not default.
+
+The main lesson of why I used this is, for imbalanced data, accuracy alone can be misleading. 
+So, this example helps choose the right metric—for example, prioritize recall if missing a defaulter is very costly.
+
+Output:
+
+=================================================================
+STEP 1: Why accuracy alone is misleading on imbalanced data
+=================================================================
+Lazy baseline (always predicts 'no default') accuracy: 74.00%
+^ That number looks great, but this model NEVER catches a single
+  defaulter. It's a useless model wearing a good accuracy score.
+
+=================================================================
+STEP 2: Our real model's numbers
+=================================================================
+Accuracy : 89.00%   (overall, how often are we right?)
+Precision: 79.22%   (of applicants we flagged as risky, this % really default)
+Recall   : 78.21%   (of applicants who really default, we catch this %)
+F1 score : 78.71%   (balances precision and recall into one number)
+ROC-AUC  : 91.18%   (how well we RANK risky vs safe applicants, 50%=random guessing)
+
+=================================================================
+STEP 3: Confusion matrix — where exactly the mistakes happen
+=================================================================
+True negatives  (correctly said 'safe'):    206
+False positives (wrongly flagged as risky): 16   <- annoys good customers
+False negatives (missed a real defaulter):  17   <- costs the bank money
+True positives  (correctly caught risky):   61
+
+=================================================================
+STEP 4: scikit-learn's built-in summary (same numbers, one table)
+=================================================================
+              precision    recall  f1-score   support
+
+  no_default       0.92      0.93      0.93       222
+     default       0.79      0.78      0.79        78
+
+    accuracy                           0.89       300
+   macro avg       0.86      0.85      0.86       300
+weighted avg       0.89      0.89      0.89       300
+
+WHICH METRIC MATTERS MOST? It depends on the business cost:
+- Missing a real defaulter (false negative) costs the bank real money
+  -> in that case, RECALL matters more than precision.
+- Wrongly flagging good customers (false positive) annoys/loses them
+  -> in that case, PRECISION matters more than recall.
+There is no single 'best' metric — you pick based on which mistake hurts more.
