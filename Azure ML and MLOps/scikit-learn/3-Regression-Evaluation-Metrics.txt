@@ -1,0 +1,40 @@
+## Regression + Evaluation Metrics (MAE, RMSE, R²) + a peek at Regularization.
+
+- I have tried to use this script to creates a fake apartment-rental dataset, trains two simple models (plain Linear Regression and Ridge Regression) to 
+  predict monthly rent from features like size, bedrooms, distance, and age, then compares their accuracy and shows what each model “learned.”
+
+What we can achieve from this?
+- Understand basic regression workflows: Data creation → train/test split → model training → evaluation.
+- Compare models: To see how adding regularization (Ridge) changes performance metrics (MAE, RMSE, R²) and shrinks coefficients to reduce overfitting.
+- Interpret model weights: To inspect how much each feature (e.g., size_sqm, distance_km) influences rent in each model.
+- Make predictions: To plug in a new apartment’s features and get a predicted rent.
+
+To conclude, it’s a minimal, self-contained example of training, evaluating, and interpreting regression models in scikit-learn,
+ideal for learning MLOps basics training purpose and if you want to experimenting with how data patterns affect model behavior.
+
+Output:
+
+=================================================================
+Comparing a plain model vs a regularized model
+=================================================================
+--- Linear Regression (no penalty) ---
+MAE  :    54.31  (on average, predictions are off by this many currency units)
+RMSE :    67.45  (like MAE, but punishes big misses harder than small ones)
+R²   :    0.963  (fraction of rent variation explained; 1.0 = perfect, 0.0 = no better than guessing the average)
+
+--- Ridge Regression (alpha=10.0 penalty) ---
+MAE  :    54.25  (on average, predictions are off by this many currency units)
+RMSE :    67.44  (like MAE, but punishes big misses harder than small ones)
+R²   :    0.963  (fraction of rent variation explained; 1.0 = perfect, 0.0 = no better than guessing the average)
+
+=================================================================
+Coefficients learned: plain vs regularized (Ridge nudges these toward 0)
+=================================================================
+  size_sqm            : LinearRegression=   12.04   Ridge=   12.04   (shrunk -0.02%)
+  bedrooms            : LinearRegression=   79.62   Ridge=   77.98   (shrunk  2.06%)
+  distance_km         : LinearRegression=  -15.68   Ridge=  -15.66   (shrunk  0.18%)
+  building_age_years  : LinearRegression=   -1.96   Ridge=   -1.96   (shrunk -0.03%)
+
+Predicted rent for a 90sqm, 3-bedroom apartment 2.5km out, 10 years old: 1654.24
+
+
