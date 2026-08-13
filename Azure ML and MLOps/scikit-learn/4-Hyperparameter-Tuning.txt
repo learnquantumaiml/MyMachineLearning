@@ -1,0 +1,89 @@
+## Hyperparameter Tuning (GridSearchCV vs RandomizedSearchCV)
+
+This code improves a Random Forest model by testing different settings and selecting the configuration that gives the best F1 score.
+
+In Simple words, this code does below steps:
+
+1) It creates a simulated loan-default dataset.
+2) It trains a normal Random Forest as a baseline.
+3) GridSearchCV tests every listed combination of settings.
+4) RandomizedSearchCV tests only a selected number of random combinations.
+5) Both methods use cross-validation to find settings that balance precision and recall.
+6) Finally, the code compares the normal, grid-tuned, and random-tuned models.
+
+F1 score is useful when correctly detecting the minority class—such as customers likely to default—is important. It balances precision and recall.
+
+What we can achieve from this?
+a) Find better model settings, such as the number of trees and tree depth.
+b) Improve loan-default detection, especially when the classes are unbalanced.
+c) Reduce manual experimentation with machine-learning parameters.
+d) Compare exhaustive and faster optimization methods:
+e) GridSearchCV: more thorough but slower.
+f) RandomizedSearchCV: faster and suitable for larger search spaces.
+g) Select a model based on F1 score, rather than relying only on accuracy.
+
+GridSearchCV evaluates all specified combinations, while RandomizedSearchCV samples a fixed number of configurations, controlled by n_iter.
+
+Example
+Instead of manually guessing:
+
+Should I use 100 or 400 trees?
+Should the depth be 4 or 8?
+
+The code automatically tests these choices and reports something like:
+
+Baseline F1:              0.76
+GridSearchCV F1:          0.80
+RandomizedSearchCV F1:    0.79
+
+In the above example, the grid-tuned model would be preferred because it achieved the highest F1 score on the test data.
+
+Note:
+- Tuning does not always improve the test score. Random Forest defaults may already work well, and one test split can be lucky or unlucky. 
+- The main purpose is to find a configuration that is more likely to generalize to new data.
+- A Random Forest combines many decision trees to improve robustness and reduce overfitting.
+
+Output:
+
+=================================================================
+F1 score on the held-out test set (higher is better)
+=================================================================
+Untuned baseline (scikit-learn defaults) : 0.8252
+GridSearchCV best model                  : 0.8243
+RandomizedSearchCV best model             : 0.8243
+
+=================================================================
+Winning settings GridSearchCV found:
+=================================================================
+  max_depth: 8
+  min_samples_leaf: 1
+  n_estimators: 400
+  (best cross-validated F1 during search: 0.7939)
+
+=================================================================
+Winning settings RandomizedSearchCV found:
+=================================================================
+  max_depth: 15
+  min_samples_leaf: 2
+  n_estimators: 314
+  (best cross-validated F1 during search: 0.7968)
+
+TAKEAWAY: GridSearchCV is exhaustive but only practical for small grids.
+RandomizedSearchCV scales to much bigger search spaces because you
+control the number of tries directly with n_iter, regardless of how
+many hyperparameters or values you're searching over.
+
+=================================================================
+A NOTE ON WHAT YOU JUST SAW (this is normal, not a bug):
+=================================================================
+The tuned models scored AT OR BELOW the untuned baseline on THIS
+one test split, even though their cross-validated scores during
+the search were solid. That's expected, for two real reasons:
+  1. RandomForest's defaults are already quite good for many
+     problems — there isn't always a lot of room to improve.
+  2. A single test split has luck baked into it. The fair
+     comparison is the cross-validated score shown above
+     (~0.79), which averages over 5 different splits — not
+     this one lucky/unlucky 25% slice of the data.
+A beginner sees 'tuning made it worse' and panics. An experienced
+engineer checks the cross-validated score, shrugs, and moves on.
