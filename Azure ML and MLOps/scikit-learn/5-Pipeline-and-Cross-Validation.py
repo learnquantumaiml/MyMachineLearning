@@ -1,3 +1,4 @@
+##This code creates a customer churn prediction model. This is part of my exam preparation and Azure MLOps learning journey.
 import numpy as np                                             # numeric operations
 import pandas as pd                                              # building the churn dataset table
 from sklearn.model_selection import cross_val_score, StratifiedKFold, train_test_split
