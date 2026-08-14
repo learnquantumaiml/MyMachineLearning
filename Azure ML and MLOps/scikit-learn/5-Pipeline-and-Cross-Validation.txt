@@ -1,0 +1,60 @@
+## Pipeline + Cross-Validation
+
+- I have used this code that creates a customer churn prediction model. 
+- It predicts whether a customer may leave a company (churn = 1) based on age, contract type, monthly charges, and tenure.
+
+In Simple words, It proceeds with below steps one by one:
+
+- Creates a sample dataset with 800 customers.
+- Fills missing values and converts text categories into numbers.
+- Scales numerical data.
+- Trains a Logistic Regression model.
+
+It does Compares:
+- One train/test split.
+- A more reliable 5-fold cross-validation approach.
+
+Why 5-fold validation is better?
+
+- The data is divided into five parts. The model trains on four parts and tests on the remaining part, repeating this five times. 
+
+It then calculates:
+  a) Mean accuracy: average model performance.
+  b) Standard deviation: how consistent the model is.
+
+Using the complete pipeline also prevents data leakage because preprocessing is learned separately inside each training fold.
+
+What we can achieve from this?
+
+In a real business, this model could:
+ 1) Identify the customers who are likely to leave.
+ 2) Helps the company offer discounts or better contracts.
+ 3) Supports customer-retention campaigns.
+ 4) Provides a more trustworthy estimate of model performance.
+ 5) Create a reusable machine-learning workflow for deployment.
+
+For example:
+- If the mean accuracy is 80% with a low standard deviation, the model performs around 80% consistently across different data samples. 
+- However, for real churn prediction, you should also check precision, recall, F1-score, and ROC-AUC, not accuracy alone.
+
+Output:
+
+=================================================================
+Old way: score from ONE lucky (or unlucky) train/test split
+=================================================================
+Accuracy: 88.12%
+
+=================================================================
+Better way: 5-fold cross-validation on the SAME pipeline
+=================================================================
+  Fold 1: 88.75%
+  Fold 2: 80.00%
+  Fold 3: 83.12%
+  Fold 4: 85.62%
+  Fold 5: 81.25%
+
+Mean accuracy across folds : 83.75%
+Standard deviation         : 3.14%
+(A small standard deviation means the model performs consistently
+ no matter which slice of data it sees — that's what makes the
+ mean score trustworthy enough to report to a stakeholder.)
