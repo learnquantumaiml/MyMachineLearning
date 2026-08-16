@@ -1,0 +1,57 @@
+## Saving, Reloading, and "Registering" a Model (joblib + metadata).
+
+- This script is a minimal “model registry” demo: it trains a scikit-learn churn model, saves both the model and a small JSON metadata file to disk,
+then reloads the model in a separate step to make predictions without retraining.
+
+In Simple words, It does below steps:
+
+1) Generates a synthetic customer churn dataset (make_churn_dataset).
+
+2) Builds a preprocessing + model pipeline: impute missing values, scale numerics, one‑hot encode categoricals, then fit a LogisticRegression classifier (build_pipeline).
+
+3) Trains the pipeline, evaluates it with 5‑fold stratified cross‑validation, and saves:
+    - The fitted model as churn_model_v1.joblib using joblib.dump.
+    - A metadata file churn_model_v1.json with version, timestamp, algorithm, CV accuracy, columns, etc.
+    
+4) Simulates a separate program loading the saved model with joblib.load and using it to predict churn for new customers.
+
+What we can achieve from this?
+
+a) Reproducible model artifacts: You get a versioned model file plus human‑readable metadata, similar to a real model registry in Azure ML.
+b) Train once, serve many times: Expensive training happens once; the saved model can be reused in APIs, batch jobs, or notebooks without retraining.
+c) Basic MLOps foundation: This pattern (model + metadata + versioning) is the core of operationalizing ML: you can extend it to CI/CD, automated retraining, and deployment to AKS or Azure ML endpoints.
+
+We can replace the local model_registry folder with Azure Blob Storage or an Azure ML model registry, 
+and the “separate program” block with a real scoring service or pipeline.
+
+Output:
+
+=================================================================
+Saved model to:    model_registry/churn_model_v1.joblib
+Saved metadata to: model_registry/churn_model_v1.json
+=================================================================
+{
+  "version": "v1",
+  "trained_at_utc": "2026-08-16T07:28:54.756204+00:00",
+  "algorithm": "LogisticRegression (inside a preprocessing Pipeline)",
+  "cv_accuracy_mean": 0.8375,
+  "cv_accuracy_std": 0.0314,
+  "n_training_rows": 800,
+  "expected_input_columns": [
+    "age",
+    "tenure_months",
+    "monthly_charges",
+    "contract_type"
+  ],
+  "target_column": "churn"
+}
+
+=================================================================
+Simulating a separate program loading the saved model...
+=================================================================
+Reloaded model — new customer 1: LIKELY TO CHURN
+Reloaded model — new customer 2: likely to stay
+
+The reloaded model made predictions with ZERO retraining — it's the
+exact same fitted pipeline, just read back from disk. That's the whole
+point: train expensively ONCE, reuse cheaply as many times as you need.
