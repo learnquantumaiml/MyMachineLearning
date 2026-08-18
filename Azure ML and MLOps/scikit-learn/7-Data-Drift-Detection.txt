@@ -1,0 +1,66 @@
+## Data Drift Detection
+
+- This code is a simple “data drift detector” for a churn model and it checks whether the new data you’re seeing  
+  in production looks statistically different from the data the model was trained on. 
+
+In simple terms, it generates two datasets:
+
+ - reference_df: simulates the “old” data the model was trained on.
+ 
+ - current_df: simulates new data after some real‑world change (e.g., prices went up, more month‑to‑month contracts).
+ 
+ - For numeric features (age, tenure_months, monthly_charges), it runs a Kolmogorov–Smirnov (KS) test:
+      -> If the p‑value is below 0.05, it flags drift for that feature.
+      
+ - For the categorical feature (contract_type), it compares category proportions:
+     -> If any category’s share changes by more than 10 percentage points, it flags drift.
+
+At the end, it prints an overall verdict:
+
+“Drift detected” → the input data distribution has changed enough to warrant re‑evaluation/retraining.
+
+“No significant drift” → data still looks similar to training data.
+
+What we can achieve from this?
+
+ - Early warning system: Detect when your model’s input data is shifting before performance visibly degrades.
+
+ - MLOps monitoring:
+    -> Plug this logic into pipelines (e.g., Azure ML, scheduled jobs) to automatically monitor drift in production.
+
+ - Decision support: 
+    -> Use drift flags to decide:
+        a) When to retrain the model.
+        b) When to investigate business changes (e.g., pricing, promotions) that might be causing the shift.
+
+
+To Conclude, In my Azure MLOps context, this pattern fits well as a monitoring step after deployment:
+  ->  Run it on new batches, log the results, and trigger retraining or alerts when drift is detected.
+
+Output:
+
+=================================================================
+NUMERIC FEATURE DRIFT (Kolmogorov-Smirnov test)
+=================================================================
+  age                  | KS stat=0.049  p-value=0.4365  -> OK, no significant drift
+    (reference mean=46.39, current mean=46.12)
+  tenure_months        | KS stat=0.060  p-value=0.2052  -> OK, no significant drift
+    (reference mean=35.45, current mean=37.43)
+  monthly_charges      | KS stat=0.393  p-value=0.0000  -> 🚨 DRIFT DETECTED
+    (reference mean=69.74, current mean=94.61)
+
+=================================================================
+CATEGORICAL FEATURE DRIFT (proportion comparison)
+=================================================================
+  contract_type       
+    Month-to-month      : reference=57.0%  current=75.8%  shift=18.8% 🚨
+    One year            : reference=23.0%  current=15.0%  shift=8.0%
+    Two year            : reference=20.0%  current=9.2%  shift=10.8% 🚨
+    -> 🚨 DRIFT DETECTED
+
+=================================================================
+OVERALL: 🚨 Drift detected in at least one feature.
+This does NOT necessarily mean the model is broken — it means the
+world changed and the model should be RE-EVALUATED (and probably
+retrained) soon, before its predictions quietly get worse.
+=================================================================
