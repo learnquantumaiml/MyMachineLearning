@@ -1,0 +1,76 @@
+##Catching Bad Data Before It Breaks the Model
+
+Every machine learning pipeline, whether it's a simple scikit-learn script or a full Azure ML training job, starts with
+the same question: can we trust the data going in? Before any model training, Feature Store write, or AutoML run, someone has to 
+check for missing values, duplicate rows, wrong data types, and numbers that don't make sense. That someone is usually pandas.
+
+- This program is a data-quality audit and cleanup pipeline for a small loan‑application dataset, written in Python with pandas and numpy. 
+- It’s designed to show, step by step, how to detect and handle common data issues before feeding data into a credit‑risk model or
+  any ML pipeline.
+
+What we can achieve from this?
+ - Catch bad data before training a model, so our model learns from clean, realistic data.
+ - Turn the checks into a reusable step in an ML pipeline (e.g., in Azure ML / MLOps).
+ - Create basic data-quality metrics (missing counts, percentages) to monitor over time.
+ - Support fair and responsible AI by ensuring only valid, well-checked data is used for decisions like credit risk.
+
+Example:
+ - one applicant's age accidentally gets typed out as "forty-one" instead of the number 41, while someone else's age somehow shows up as 190.
+ - This script cleans all that messy data right up. It turns word-based ages into missing values, flags unrealistic numbers like 190 as invalid, 
+   clears out duplicate applications, and we know how many income details are missing.  
+ - That way, we can easily fix or toss out those bad rows before we even touch wer credit-risk model.
+
+ Output:
+
+---- raw data ----
+   application_id applicant_age  annual_income  loan_amount region
+0             101            34        52000.0        15000     EU
+1             102            29        61000.0        20000     EU
+2             103     forty-one        58000.0        18000   APAC
+3             104            45            NaN        22000     NA
+4             104            45            NaN        22000     NA
+5             105           190        73000.0        25000     NA
+
+---- step 1: how many missing values in each column ----
+application_id    0
+applicant_age     0
+annual_income     2
+loan_amount       0
+region            0
+dtype: int64
+
+---- step 2: find and remove duplicate rows ----
+duplicate rows found: 1
+   application_id applicant_age  annual_income  loan_amount region
+0             101            34        52000.0        15000     EU
+1             102            29        61000.0        20000     EU
+2             103     forty-one        58000.0        18000   APAC
+3             104            45            NaN        22000     NA
+5             105           190        73000.0        25000     NA
+
+---- step 3: fix the wrong data type on applicant_age ----
+   application_id  applicant_age  annual_income  loan_amount region
+0             101           34.0        52000.0        15000     EU
+1             102           29.0        61000.0        20000     EU
+2             103            NaN        58000.0        18000   APAC
+3             104           45.0            NaN        22000     NA
+5             105          190.0        73000.0        25000     NA
+application_id      int64
+applicant_age     float64
+annual_income     float64
+loan_amount         int64
+region             object
+dtype: object
+
+---- step 4: flag rows outside a believable age range ----
+   application_id  applicant_age  annual_income  loan_amount region
+2             103            NaN        58000.0        18000   APAC
+5             105          190.0        73000.0        25000     NA
+
+---- step 5: one-glance data quality summary ----
+                missing_values  pct_missing
+application_id               0          0.0
+applicant_age                1         20.0
+annual_income                1         20.0
+loan_amount                  0          0.0
+region                       0          0.0
