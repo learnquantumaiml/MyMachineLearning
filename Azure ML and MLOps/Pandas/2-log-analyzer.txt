@@ -1,0 +1,123 @@
+# Making Sense of Request Logs with GroupBy (MLOps Monitoring)
+
+Once your data is trustworthy, the next question an MLOps engineer asks is usually something like "is model v2 actually slower than v1?" or 
+"which region is failing the most?" That's exactly what groupby() is built for, and it's one of the most-used tools in pandas.
+
+- This program creates a small, simulated request log for a deployed AI/ML model endpoint and analyzes it with pandas. 
+- It helps you compare model versions, measure reliability and performance, understand regional behavior, and estimate token 
+  usage—similar to a basic MLOps or GenAIOps monitoring analysis. 
+- Pandas groupby() follows a “split, apply, combine” process, while agg() calculates multiple summary metrics for each group.
+
+What can we achieve with this?
+
+Model comparison: 
+We can compare candidate model versions before deciding whether to promote a new version:
+
+- Is v2 faster than v1?
+- Is v2 more reliable?
+- Does v2 consume fewer tokens?
+
+In this example, v2 uses fewer tokens on average, but it has a lower success rate and higher average latency.
+That could lead to a decision such as:
+- Do not fully promote v2 yet. Investigate its failures and regional latency first.
+
+Deployment validation
+- After deploying a new model version, you can compare:
+  a) Pre-deployment behavior.
+  b) Post-deployment behavior.
+  c) v1 versus v2:
+     - Canary traffic versus production traffic.
+
+- This supports blue-green deployments, canary releases, and automated rollback decisions.
+For example:
+Promote v2 only if:
+- Success rate >= 99%
+- p95 latency <= 500 ms
+- Average token usage does not increase by more than 10%
+
+Regional performance monitoring:
+- The version-and-region analysis helps identify whether an issue affects:
+   1) All regions.
+   2) A single region.
+   3) A specific model version in a specific region.
+   4) This is particularly useful for Azure architectures involving:
+   5) Azure Machine Learning online endpoints.
+   6) Azure OpenAI deployments.
+   7) Azure API Management.
+   8) Azure Kubernetes Service.
+   9) Azure Monitor and Application Insights.
+  10) Multi-region inference deployments.
+
+Cost estimation
+ - tokens_used can help estimate consumption-related costs.
+For example, if you know the price per 1,000 tokens, you can calculate:
+price_per_1000_tokens = 0.01
+
+df["estimated_cost"] = (
+    df["tokens_used"] / 1000 * price_per_1000_tokens
+)
+- we can then aggregate cost by model, region, application, or customer.
+- This program does not calculate cost because it does not contain a pricing value. It only reports token usage.
+
+I have not covered everything, as this is an offline analysis of a small, manually created dataset. It does not yet:
+- Read logs from Azure Monitor or Application Insights.
+- Query a real endpoint.
+- Capture exception messages or HTTP status codes.
+- Calculate p95 or p99 latency.
+- Track latency over time.
+- Detect anomalies automatically.
+- Create charts or dashboards.
+- Send alerts.
+- Estimate real cost using current model pricing.
+- Evaluate model quality, accuracy, toxicity, or groundedness.
+- Track prompt and completion tokens separately.
+- Handle missing or malformed data.
+- Distinguish client errors from server errors.
+
+So, it is not a complete production monitoring solution. It is a compact learning example showing how to analyze endpoint telemetry after 
+logs have already been collected.
+
+Output:
+
+---- raw request log ----
+    request_id model_version region  latency_ms   status  tokens_used
+0            1            v1     EU         220  success          512
+1            2            v1     NA         340  success          890
+2            3            v1     EU         210  success          480
+3            4            v2   APAC         180  success          300
+4            5            v2     EU         195     fail          275
+5            6            v2     NA         360  success          910
+6            7            v1     NA         300     fail          860
+7            8            v2   APAC         175  success          310
+8            9            v1     EU         205  success          495
+9           10            v2     EU         190  success          305
+10          11            v1   APAC         165  success          288
+11          12            v2     NA         355     fail          875
+
+---- average latency per model version ----
+model_version
+v1    240.0
+v2    242.5
+Name: latency_ms, dtype: float64
+
+---- success rate per model version ----
+model_version
+v1    83.3
+v2    66.7
+Name: status, dtype: float64
+
+---- multiple stats at once with agg() ----
+               avg_latency_ms  max_latency_ms  total_requests  avg_tokens
+model_version                                                            
+v1                      240.0             340               6       587.5
+v2                      242.5             360               6       495.8
+
+---- breakdown by version AND region ----
+model_version  region
+v1             APAC      165.0
+               EU        211.7
+               NA        320.0
+v2             APAC      177.5
+               EU        192.5
+               NA        357.5
+Name: latency_ms, dtype: float64
