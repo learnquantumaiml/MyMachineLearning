@@ -1,0 +1,86 @@
+# Turning Raw Columns into Features a Model Can Use
+
+- Clean data isn't the same as model-ready data. A model can't read the word "premium" and know what to do with it, and 
+  it can't read "account_age_days: 720" and automatically understand that's a loyal, long-term customer. 
+- Feature engineering is the step where you translate raw columns into a shape a model can actually learn from. 
+- This is the same kind of prep that happens right before data lands in an Azure ML Feature Store or gets handed to AutoML.
+- This script is basically prep work for a machine learning model. It takes raw customer support data and uses pandas to whip it into
+   shape so an algorithm can actually understand it.
+- It walks you through a few essential data-cleaning moves: grouping numbers into buckets (binning), swapping text labels for numbers
+  (one-hot encoding), building new stats out of existing ones, and setting up warning flags for risky behavior. 
+- These are the exact steps you'd use to prep your data before predicting something like customer churn.
+
+What we can achieve with this pattern?
+- This pattern prepares tabular data for machine learning and analytics workflows such as:
+  a) Churn or risk modeling:
+     The engineered features (spend_per_day, high_churn_risk, binned tenure) are typical inputs for classification models that predict churn, 
+     downgrade, or support burden.
+  b) Segmentation and cohort analysis: 
+     Binned tenure and plan-type dummies let you group customers (e.g., “new free users with high tickets”) for dashboards or targeted 
+     interventions.
+  c) Feature standardization before scaling: 
+     Numeric features like spend_per_day can later be scaled/normalized; categorical dummies are already in a 0/1 format suitable for many models.
+  d) Rapid prototyping of business rules: 
+     The high_churn_risk flag shows how to encode domain knowledge directly as features, which can be used as-is or combined with learned models.
+
+Output:
+---- raw features ----
+   customer_id  account_age_days  monthly_spend   plan_type  \
+0            1                45           12.5        free   
+1            2               720           89.0     premium   
+2            3                15            5.0        free   
+3            4              1500          150.0  enterprise   
+4            5               200           40.0     premium   
+5            6                 3            2.0        free   
+
+   num_support_tickets  
+0                    1  
+1                    0  
+2                    4  
+3                    0  
+4                    2  
+5                    6  
+
+---- step 1: bin a numeric column into readable categories ----
+   account_age_days account_age_bucket
+0                45   established_user
+1               720       veteran_user
+2                15           new_user
+3              1500       veteran_user
+4               200   established_user
+5                 3           new_user
+
+---- step 2: one-hot encode a categorical column ----
+   customer_id  account_age_days  monthly_spend  num_support_tickets  \
+0            1                45           12.5                    1   
+1            2               720           89.0                    0   
+2            3                15            5.0                    4   
+3            4              1500          150.0                    0   
+4            5               200           40.0                    2   
+5            6                 3            2.0                    6   
+
+  account_age_bucket  plan_enterprise  plan_free  plan_premium  
+0   established_user            False       True         False  
+1       veteran_user            False      False          True  
+2           new_user            False       True         False  
+3       veteran_user             True      False         False  
+4   established_user            False      False          True  
+5           new_user            False       True         False  
+
+---- step 3: create a new feature from existing columns ----
+   customer_id  monthly_spend  account_age_days  spend_per_day
+0            1           12.5                45          0.278
+1            2           89.0               720          0.124
+2            3            5.0                15          0.333
+3            4          150.0              1500          0.100
+4            5           40.0               200          0.200
+5            6            2.0                 3          0.667
+
+---- step 4: flag a simple risk feature ----
+   customer_id  num_support_tickets  monthly_spend  high_churn_risk
+0            1                    1           12.5                0
+1            2                    0           89.0                0
+2            3                    4            5.0                1
+3            4                    0          150.0                0
+4            5                    2           40.0                0
+5            6                    6            2.0                1
