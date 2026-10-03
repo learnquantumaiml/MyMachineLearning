@@ -1,0 +1,89 @@
+# Combining Data That Lives in Two Different Places
+
+- This program demonstrates joining and analyzing ML experiment data with pandas—specifically, combining a table of experiment-run metadata
+  with a table of evaluation metrics, then identifying the best run per model type.
+- It is a small but very relevant MLOps data-analysis pattern: 
+   1) MLflow/Azure ML often stores run details and logged metrics in separate places, and you need to combine them to compare models.
+
+First, It creates 2 DataFrames:
+
+| Table   | Meaning                            | Key columns                |
+| ------- | ---------------------------------- | -------------------------- |
+| runs    | Metadata about each experiment run | run_id, model_type, team   |
+| metrics | Evaluation results for each run    | run_id, accuracy, f1_score |
+
+The shared key is run_id. The program then uses pd.merge() to combine the tables in three different ways.
+
+| Join  | What it keeps                                              | Result in this example                                           |
+| ----- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| inner | Only run_id values present in both tables                  | run_001, run_002, run_003; excludes run_004 and run_005          |
+| left  | Every row from runs, plus matching metrics where available | Adds run_004 with NaN metrics because it has no metrics yet      |
+| outer | Every row from both tables                                 | Includes run_004 and run_005; missing values are filled with NaN |
+
+For example, run_004 exists in runs but has no metrics, while run_005 has metrics but no metadata. 
+An inner join silently removes both; an outer join preserves both, which is useful for spotting incomplete experiment records.
+
+What we can achieve from this?
+- After joining, the program answers a question that cannot be answered from either table alone.
+  which run achieved the highest F1 score for each model type?
+  model_type       run_id    f1_score
+  random_forest    run_001   0.85
+  xgboost          run_002   0.90
+- Only random_forest and xgboost appear because those are the only model types with complete metadata and metrics after the inner join. 
+- run_002, the XGBoost run, has the best overall F1 score at 0.90.
+
+- I felt as an MLOps engineer, this is essentially the logic behind experiment comparison and model selection. 
+  It also helps on below topics:
+   a) Track experiments: 
+      Store run metadata such as model type, team, parameters, and environment.
+   b) Log evaluation results: 
+      Store metrics such as accuracy, F1, precision, recall, latency, or cost.
+   c) Combine them:
+      Join on run_id to create one analyzable experiment table.
+  d) Compare and select: 
+     Rank runs by metric, identify the best model per category, and promote it to staging or production.
+  e) Detect data-quality issues: 
+     A left or outer join reveals runs with missing metrics or orphaned metric records.
+
+Output:
+
+---- runs table ----
+    run_id           model_type      team
+0  run_001        random_forest  platform
+1  run_002              xgboost  platform
+2  run_003        random_forest  research
+3  run_004  logistic_regression  research
+
+---- metrics table ----
+    run_id  accuracy  f1_score
+0  run_001      0.87      0.85
+1  run_002      0.91      0.90
+2  run_003      0.84      0.81
+3  run_005      0.79      0.76
+
+---- inner join: only runs present in BOTH tables ----
+    run_id     model_type      team  accuracy  f1_score
+0  run_001  random_forest  platform      0.87      0.85
+1  run_002        xgboost  platform      0.91      0.90
+2  run_003  random_forest  research      0.84      0.81
+
+---- left join: keep every row from 'runs', fill blanks where no metrics exist ----
+    run_id           model_type      team  accuracy  f1_score
+0  run_001        random_forest  platform      0.87      0.85
+1  run_002              xgboost  platform      0.91      0.90
+2  run_003        random_forest  research      0.84      0.81
+3  run_004  logistic_regression  research       NaN       NaN
+
+---- outer join: keep everything from both sides, even run_004 and run_005 ----
+    run_id           model_type      team  accuracy  f1_score
+0  run_001        random_forest  platform      0.87      0.85
+1  run_002              xgboost  platform      0.91      0.90
+2  run_003        random_forest  research      0.84      0.81
+3  run_004  logistic_regression  research       NaN       NaN
+4  run_005                  NaN       NaN      0.79      0.76
+
+---- best run per model type, after joining ----
+                run_id  f1_score
+model_type                      
+random_forest  run_001      0.85
+xgboost        run_002      0.90
