@@ -1,0 +1,74 @@
+#Turning Messy Nested JSON into a Normal Table (GenAI/LLM usage-analytics pipeline)
+
+- This program is a small GenAI/LLM usage-analytics pipeline: I
+   a) It takes nested JSON-style logs from Azure OpenAI or MLflow runs, 
+      flattens them into a pandas table, then analyzes token usage and failures. 
+   b) It is essentially the first step toward building an LLM observability or cost-monitoring dashboard.
+
+  A lot of real Azure AI output doesn't arrive as a clean table. It arrives as nested JSON, the kind of thing we would get back from an 
+  Azure OpenAI batch job log, an MLflow run's parameters and metrics, or a Document Intelligence response. 
+  Before we can analyze any of it with the tools, we need to flatten it into rows and columns first. So, we can understand in a better way.
+
+Steps: (High Level)
+1) Defines nested log data.
+2) Flattens nested JSON. (Converts nested keys to separate columns.
+3) Analyzes the flattened data. 
+4) Improves column names.
+
+What we can achieve with this?
+- This is a strong foundation for a practical Azure GenAIOps observability project. 
+  We can also extend it to below ideas:
+   a) Track token consumption by model, user, application, environment, or day.
+   b) Estimate and monitor LLM cost, especially for Azure OpenAI deployments.
+   c) Detect failed or slow inference runs and investigate model/version-specific issues.
+   d) Build a Power BI dashboard for GenAI usage, reliability, and cost.
+   e) Export cleaned metrics to Azure SQL, Cosmos DB, Azure Monitor, or ADLS.
+   f) Add alerting, for example when daily token usage or failure rate exceeds a threshold.
+   g) Turn it into a reusable Python module inside your GitHub portfolio.
+   
+As an MLOps engineer, I need to think from FinOps Point of view to understand everything better about how we are getting charged by Microsoft Azure.
+
+Output:
+
+---- this is what nested JSON looks like as a plain Python list ----
+{'run_id': 'run_101', 'model': {'name': 'gpt-4o-mini', 'version': '2026-03-01'}, 'usage': {'prompt_tokens': 210, 'completion_tokens': 85, 'total_tokens': 295}, 'status': 'succeeded'}
+
+---- json_normalize flattens the nested keys into flat columns ----
+    run_id     status   model.name model.version  usage.prompt_tokens  \
+0  run_101  succeeded  gpt-4o-mini    2026-03-01                  210   
+1  run_102  succeeded  gpt-4o-mini    2026-03-01                  340   
+2  run_103     failed        phi-4    2026-01-15                  150   
+
+   usage.completion_tokens  usage.total_tokens  
+0                       85                 295  
+1                      120                 460  
+2                       40                 190  
+
+---- now it behaves like any other DataFrame ----
+
+total tokens used per model:
+model.name
+gpt-4o-mini    755
+phi-4          190
+Name: usage.total_tokens, dtype: int64
+
+failed runs only:
+    run_id  status model.name model.version  usage.prompt_tokens  \
+2  run_103  failed      phi-4    2026-01-15                  150   
+
+   usage.completion_tokens  usage.total_tokens  
+2                       40                 190  
+
+---- renaming the flattened columns to something cleaner ----
+    run_id     status   model_name model_version  prompt_tokens  \
+0  run_101  succeeded  gpt-4o-mini    2026-03-01            210   
+1  run_102  succeeded  gpt-4o-mini    2026-03-01            340   
+2  run_103     failed        phi-4    2026-01-15            150   
+
+   completion_tokens  total_tokens  
+0                 85           295  
+1                120           460  
+2                 40           190 
+
+Hope this helps everyone who is learning Pandas and Azure MLOps.
+  
